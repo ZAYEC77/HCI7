@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace DPlayer
 {
-    enum Style {rock = 1, pop = 2, alternative = 3, electronic = 4}
+    enum Style { rock, pop, electronic }
     class Track : Titleable
     {
         protected Album album;
@@ -28,6 +29,21 @@ namespace DPlayer
         public Track()
         {
             
+        }
+
+        public Track(XmlNode node)
+        {
+            Title = node.Attributes["title"].Value.ToString();
+        }
+
+        internal void WriteToNode(XmlNode node)
+        {
+            XmlDocument doc = node.OwnerDocument;
+            XmlNode track = doc.CreateElement("track");
+            XmlAttribute attr = doc.CreateAttribute("title");
+            attr.Value = Title;
+            track.Attributes.InsertBefore(attr, null);
+            node.AppendChild(track);
         }
     }
     

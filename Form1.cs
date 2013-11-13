@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace DPlayer
 {
@@ -137,7 +138,10 @@ namespace DPlayer
             {
                 ((Artist)artistList[comboBox4.SelectedIndex]).Albums.OutputInComboBox(comboBox5);
             }
-            ((Artist)artistList[comboBox3.SelectedIndex]).Albums.OutputInListBox(listBox4);
+            if (HasSelectedC(comboBox3, false))
+            {
+                ((Artist)artistList[comboBox3.SelectedIndex]).Albums.OutputInListBox(listBox4);
+            }
         }
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
@@ -220,9 +224,12 @@ namespace DPlayer
 
         private void OutputTracks()
         {
+            if (HasSelectedC(comboBox4, false) )
+            {
                 Artist a = (Artist)artistList[comboBox4.SelectedIndex];
                 Album al = (Album)a.Albums[comboBox5.SelectedIndex];
                 al.Tracks.OutputInListBox(listBox5);
+            }
         }
 
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -293,6 +300,64 @@ namespace DPlayer
                 OutputPlayList();
             }
 
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            NewFile();
+        }
+
+        private void NewFile()
+        {
+            artistList.Clear();
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            OpenFile();
+        }
+
+        private void OpenFile()
+        {
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(openFileDialog1.FileName);
+                XmlNode node = doc.GetElementsByTagName("doc")[0];
+                foreach (XmlNode item in node.ChildNodes)
+                {
+                    artistList.Add(new Artist(item));
+                }
+                OutputAll();
+            }
+        }
+
+        private void OutputAll()
+        {
+            OutputAlbums();
+            OutputArtists();
+            OutputTracks();
+            OutputPlayList();
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            SaveFile();
+        }
+
+        private void SaveFile()
+        {
+            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                XmlDocument doc = new XmlDocument();
+                XmlNode node = doc.CreateElement("doc");
+                doc.AppendChild(node);
+                foreach (Artist item in artistList)
+                {
+                    item.WriteToNode(node);
+                }
+                doc.Save(saveFileDialog1.FileName);
+            }
         }        
 
     }
