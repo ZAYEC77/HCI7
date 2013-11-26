@@ -112,7 +112,7 @@ namespace DPlayer
             {
                 Artist a = (Artist)artistList[comboBox3.SelectedIndex];
                 a.Albums.Add(
-                    new Album() { Title = textBox2.Text, Artist = a }
+                    new Album() { Title = textBox2.Text, Artist = a, Tracks = new Outputable() }
                     );
                 OutputAlbums();
             }
@@ -243,7 +243,7 @@ namespace DPlayer
 
         private void comboBox5_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (HasSelectedC(comboBox5, false))
+            if (HasSelectedC(comboBox5, false) && HasSelectedC(comboBox4, false))
             {
                 Artist a = (Artist)artistList[comboBox4.SelectedIndex];
                 Album al = (Album)a.Albums[comboBox5.SelectedIndex];
